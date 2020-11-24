@@ -1,39 +1,72 @@
 import React from 'react'
-import { Card, Button, Table, Form, Input, Checkbox,Select,Radio, Icon, message, Modal, DatePicker } from 'antd'
+import { Card, Button, Table, Form, Input, Checkbox,Select,Radio, Icon, Message, Modal, DatePicker, Row, Col } from 'antd'
 import axios from '../../axios/index'
 import Utils from '../../utils/utils'
 import ETable from '../../components/ETable/index'
+import BaseForm from '../../components/BaseForm'
+import Qs from 'qs';
+import 'moment/locale/zh-cn';
 import Moment from 'moment'
+import locale from 'antd/lib/date-picker/locale/zh_CN';
 const FormItem = Form.Item;
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
 export default class User extends React.Component{
 
     state = {
-        list:[]
+        list:[],
+        pwdInfo: ''
     }
 
     params = {
-        page:1
+      PageIndex:1,
+      pageSize: 10,
+      userName: '',
+      phone: null
     }
+
+    formList = [
+      {
+          type:'INPUT',
+          label:'姓名',
+          field:'userName',
+          initialValue:'',
+          width:80,
+          placeholder: '请输入姓名'
+      },
+      {
+        type:'INPUT',
+        label:'手机号',
+        field:'phone',
+        initialValue:'',
+        width:80,
+        placeholder: '请输入手机号'
+    }
+    ]
 
     requestList = ()=>{
         axios.ajax({
-            url:'/table/list1',
-            data:{
-                params:{
-                    page:this.params.page
-                }
+            url:'/sysUser/list',
+            method: 'post',
+            transformRequest: [function (data) {
+              // 对 data 进行任意转换处理
+              return Qs.stringify(data)
+            }],
+            data: {
+                PageIndex: this.params.PageIndex,
+                pageSize: this.params.pageSize,
+                userName: this.params.userName,
+                phone: this.params.phone
             }
         }).then((res)=>{
             let _this = this;
             this.setState({
-                list:res.result.list.map((item,index)=>{
+                list:res.records.map((item,index)=>{
                     item.key=index
                     return item;
                 }),
                 pagination:Utils.pagination(res,(current)=>{
-                    _this.params.page = current;
+                    _this.params.PageIndex = current.page;
                     _this.requestList();
                 })
             })
@@ -75,25 +108,34 @@ export default class User extends React.Component{
                 })
                 return;
             }
-            Utils.ui.confirm({
-                text:'确定要删除此用户吗？',
-                onOk:()=>{
-                    axios.ajax({
-                        url:'/user/delete',
-                        data:{
-                            params:{
-                                id:item.id
-                            }
-                        }
-                    }).then((res)=>{
-                        if(res.code ==0){
-                            this.setState({
-                                isVisible:false
-                            })
-                            this.requestList();
-                        }
-                    })
-                }
+            this.state.deletevisible = true
+            Modal.confirm({
+              content:'确定要删除此用户吗？',
+              cancelText: '取消',
+              okType: 'danger',
+              visible:this.state.deletevisible,
+              onCancel: () => {
+                this.setState({
+                  deletevisible:false
+                })
+              },
+              onOk:()=>{
+                let data = new FormData();
+                data.append("id", item.id)
+                  axios.ajax({
+                      url:'/sysUser/delete',
+                      method: 'post',
+                      data: data
+                  }).then((res)=>{
+                      if(res.code == 200){
+                          this.setState({
+                            deletevisible:false
+                          })
+
+                          this.requestList();
+                      }
+                  })
+              }
             })
         }
     }
@@ -101,21 +143,85 @@ export default class User extends React.Component{
     handleSubmit = ()=>{
         let type = this.state.type;
         let data = this.userForm.props.form.getFieldsValue();
+        let dateString = Moment(data.regTime).format('YYYY-MM-DD')
+        data.regTime = dateString
         axios.ajax({
-            url:type == 'create'?'/user/add':'/user/edit',
+            url:type == 'create'?'/sysUser/add':'/sysUser/update',
+            method: 'post',
+            transformRequest: [function (data) {
+              // 对 data 进行任意转换处理
+              return Qs.stringify(data)
+            }],
             data:{
-                params:{
-                    ...data
-                }
+                ...data
             }
         }).then((res)=>{
-            if(res.code ==0){
+            if(res.code == 200){
                 this.setState({
                     isVisible:false
                 })
+                if (type == 'create') {
+                  Message.success("创建员工成功！");
+                } else {
+                  Message.success("编辑员工成功！");
+                }
                 this.requestList();
+            } else {
+              if (type == 'create') {
+                Message.error("创建员工失败！");
+              } else {
+                Message.error("编辑员工失败！");
+              }
             }
         })
+    }
+
+    // 修改密码
+    handlePwdSubmit = () => {
+      let data = new FormData();
+      data.append("npwd", this.state.pwdInfo)
+      data.append("uid", this.state.userInfo.id)
+      if (this.state.pwdInfo) {
+        axios.ajax({
+          url:'sysUser/repass_admin',
+          method: 'post',
+          data: data
+        }).then((res)=>{
+            if(res.code == 200){
+                this.setState({
+                  isPwdVisible:false
+                })
+                Message.success("修改密码成功！");
+                this.requestList();
+            } else {
+              Message.error("修改密码失败！");
+            }
+        })
+      } else {
+        Message.error("修改新密码不能为空！");
+      }
+    }
+
+    // 查询表单
+    handleFilterSubmit = (filterParams) => {
+      this.params = filterParams;
+      this.requestList();
+    };
+
+    showPwd = () => {
+      this.userForm.props.form.resetFields();
+      this.setState({
+        isVisible:false
+      })
+      this.setState({
+        isPwdVisible:true
+      })
+    }
+
+    changePwdValue = (e) => {
+      this.setState({
+        pwdInfo : e.target.value
+      })
     }
 
     render(){
@@ -123,74 +229,32 @@ export default class User extends React.Component{
             title: 'id',
             dataIndex: 'id'
           }, {
-            title: '用户名',
-            dataIndex: 'username'
+            title: '姓名',
+            dataIndex: 'userName'
           }, {
-            title: '性别',
-            dataIndex: 'sex',
-            render(sex){
-                return sex ==1 ?'男':'女'
-            }
+            title: '手机号',
+            dataIndex: 'phone'
           }, {
-            title: '状态',
-            dataIndex: 'state',
-            render(state){
-                let config = {
-                    '1':'咸鱼一条',
-                    '2':'风华浪子',
-                    '3':'北大才子一枚',
-                    '4':'百度FE',
-                    '5':'创业者'
-                }
-                return config[state];
-            }
+            title: '入职时间',
+            dataIndex: 'regTime'
           },{
-            title: '爱好',
-            dataIndex: 'interest',
-            render(interest){
-                let config = {
-                    '1':'游泳',
-                    '2':'打篮球',
-                    '3':'踢足球',
-                    '4':'跑步',
-                    '5':'爬山',
-                    '6':'骑行',
-                    '7':'桌球',
-                    '8':'麦霸'
-                }
-                return config[interest];
-            }
+            title: '本年度剩余年假',
+            dataIndex: 'remainDays'
           },{
-            title: '爱好',
-            dataIndex: 'isMarried',
-            render(isMarried){
-                return isMarried?'已婚':'未婚'
-            }
+            title: '本年度已用年假',
+            dataIndex: 'passDays'
           },{
-            title: '生日',
-            dataIndex: 'birthday'
+            title: '年假基数',
+            dataIndex: 'baseDays'
           },{
-            title: '联系地址',
-            dataIndex: 'address'
-          },{
-            title: '早起时间',
-            dataIndex: 'time'
+            title: '年假到期时间',
+            dataIndex: 'passDate'
           }
         ];
         return (
             <div>
                 <Card>
-                    <Form layout="inline">
-                        <FormItem>
-                            <Input placeholder="请输入用户名"/>
-                        </FormItem>
-                        <FormItem>
-                            <Input type="password" placeholder="请输入密码"/>
-                        </FormItem>
-                        <FormItem>
-                            <Button type="primary">登 录</Button>
-                        </FormItem>
-                    </Form>
+                  <BaseForm formList={this.formList} filterSubmit={this.handleFilterSubmit}/>
                 </Card>
                 <Card style={{marginTop:10}}>
                     <Button type="primary" icon="plus" onClick={()=>this.handleOperator('create')}>创建员工</Button>
@@ -212,6 +276,8 @@ export default class User extends React.Component{
                     visible={this.state.isVisible}
                     onOk={this.handleSubmit}
                     width={800}
+                    cancelText="取消"
+                    okText="确认"
                     onCancel={()=>{
                         this.userForm.props.form.resetFields();
                         this.setState({
@@ -220,22 +286,34 @@ export default class User extends React.Component{
                         })
                     }}
                 >
-                    <UserForm userInfo={this.state.userInfo} type={this.state.type} wrappedComponentRef={(inst) => this.userForm = inst }/>
+                    <UserForm userInfo={this.state.userInfo} type={this.state.type} wrappedComponentRef={(inst) => this.userForm = inst } showPwd={() => { this.showPwd()}}/>
+                </Modal>
+
+                <Modal
+                    title="修改密码"
+                    visible={this.state.isPwdVisible}
+                    onOk={this.handlePwdSubmit}
+                    width={800}
+                    cancelText="取消"
+                    okText="确认"
+                    onCancel={()=>{
+                        this.setState({
+                          isPwdVisible:false,
+                          pwdInfo:''
+                        })
+                    }}
+                >
+                    <FormItem label="修改密码" labelCol={{ span: 5 }} wrapperCol={{ span: 16 }}>
+                      <Input type="text" placeholder="请输入新密码" onChange={(e) => {this.changePwdValue(e)}} />
+                    </FormItem>
                 </Modal>
             </div>
         );
     }
 }
 class UserForm extends React.Component{
-
-    getState = (state)=>{
-        return {
-            '1':'咸鱼一条',
-            '2':'风华浪子',
-            '3':'北大才子一枚',
-            '4':'百度FE',
-            '5':'创业者'
-        }[state]
+    constructor (props) {
+      super(props)
     }
 
     render(){
@@ -246,65 +324,79 @@ class UserForm extends React.Component{
         };
         const userInfo = this.props.userInfo || {};
         const type = this.props.type;
+        const dateFormat = 'YYYY-MM-DD';
+
         return (
             <Form layout="horizontal">
                 <FormItem label="姓名" {...formItemLayout}>
                     {
-                        userInfo && type=='detail'?userInfo.username:
-                        getFieldDecorator('user_name',{
-                            initialValue:userInfo.username
+                        userInfo && type=='detail'?userInfo.userName:
+                        getFieldDecorator('userName',{
+                            initialValue:userInfo.userName
                         })(
-                            <Input type="text" placeholder="请输入姓名"/>
+                            <Input type="text" placeholder="请输入姓名" disabled={type=='edit'} />
                         )
                     }
                 </FormItem>
-                <FormItem label="性别" {...formItemLayout}>
+                <FormItem label="手机号" {...formItemLayout}>
                     {
-                        userInfo && type=='detail'?userInfo.sex==1?'男':'女':
-                        getFieldDecorator('sex',{
-                            initialValue:userInfo.sex
+                        userInfo && type=='detail'?userInfo.phone:
+                        getFieldDecorator('phone',{
+                            initialValue:userInfo.phone
                         })(
-                        <RadioGroup>
-                            <Radio value={1}>男</Radio>
-                            <Radio value={2}>女</Radio>
-                        </RadioGroup>
+                          <Input type="text" placeholder="请输入手机号" disabled={type=='edit'} />
                     )}
                 </FormItem>
-                <FormItem label="状态" {...formItemLayout}>
+                <FormItem label="入职时间" {...formItemLayout}>
                     {
-                        userInfo && type=='detail'?this.getState(userInfo.state):
-                        getFieldDecorator('state',{
-                            initialValue:userInfo.state
+                        userInfo && type=='detail'?userInfo.regTime:
+                        getFieldDecorator('regTime',{
+                            initialValue: type=='create' ? '' : Moment(userInfo.regTime, dateFormat)
                         })(
-                        <Select>
-                            <Option value={1}>咸鱼一条</Option>
-                            <Option value={2}>风华浪子</Option>
-                            <Option value={3}>北大才子一枚</Option>
-                            <Option value={4}>百度FE</Option>
-                            <Option value={5}>创业者</Option>
-                        </Select>
+                          <DatePicker locale={locale} format={dateFormat} disabled={type=='edit'} />
                     )}
                 </FormItem>
-                <FormItem label="生日" {...formItemLayout}>
+                { type!='create' &&
+                  <div>
+                    <FormItem label="已使用年假" {...formItemLayout}>
                     {
-                        userInfo && type=='detail'?userInfo.birthday:
-                        getFieldDecorator('birthday',{
-                            initialValue:Moment(userInfo.birthday)
+                        userInfo && type=='detail'?userInfo.passDays:
+                        getFieldDecorator('passDays',{
+                            initialValue:userInfo.passDays
                         })(
-                        <DatePicker />
+                            <Input type="text" placeholder="请输入" />
+                        )
+                    }
+                  </FormItem>
+                  <FormItem label="年假基数" {...formItemLayout}>
+                    {
+                        userInfo && type=='detail'?userInfo.baseDays:
+                        getFieldDecorator('baseDays',{
+                            initialValue:userInfo.baseDays
+                        })(
+                            <Input type="text" placeholder="请输入" />
+                        )
+                    }
+                  </FormItem>
+                  <FormItem label="年假到期时间" {...formItemLayout}>
+                    {
+                        userInfo && type=='detail'?userInfo.passDate:
+                        getFieldDecorator('passDate',{
+                            initialValue: type=='create' ? '' : Moment(userInfo.passDate, dateFormat)
+                        })(
+                          <DatePicker locale={locale} format={dateFormat} />
                     )}
                 </FormItem>
-                <FormItem label="联系地址" {...formItemLayout}>
-                    {
-                        userInfo && type=='detail'?userInfo.address:
-                        getFieldDecorator('address',{
-                            initialValue:userInfo.address
-                        })(
-                        <Input.TextArea rows={3} placeholder="请输入联系地址"/>
-                    )}
-                </FormItem>
+                <Row>
+                  <Col span={5}></Col>
+                  <Button onClick={(e) => {this.props.showPwd(e)}}>修改密码</Button>
+                </Row>
+                </div>
+                }
+                
             </Form>
         );
     }
 }
+
 UserForm = Form.create({})(UserForm);

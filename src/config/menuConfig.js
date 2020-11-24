@@ -1,9 +1,9 @@
 const menuList = [
     {
         title: '首页',
-        key: '/home'
+        key: '/user'
     },
-    {
+    /* {
         title: 'UI',
         key: '/ui',
         children: [
@@ -120,6 +120,6 @@ const menuList = [
     {
         title: '权限设置',
         key: '/permission'
-    },
+    }, */
 ];
 export default menuList;

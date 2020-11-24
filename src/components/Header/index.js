@@ -1,3 +1,11 @@
+/*
+ * @Author: wangxudong
+ * @Email: wangxudong@foxgoing.com
+ * @Date: 2020-11-10 16:39:30
+ * @LastEditors: wangxudong
+ * @LastEditTime: 2020-11-24 16:39:20
+ * @Description: 
+ */
 import React from 'react'
 import { Row,Col } from "antd"
 import './index.less'
@@ -8,7 +16,7 @@ class Header extends React.Component{
     state={}
     componentWillMount(){
         this.setState({
-            userName:'河畔一角'
+            userName: window.localStorage.username
         })
         setInterval(()=>{
             let sysTime = Util.formateDate(new Date().getTime());
@@ -33,6 +41,13 @@ class Header extends React.Component{
             }
         })
     }
+    goLogin() {
+      // 清除localStorage
+      localStorage.clear();
+
+      // 普通员工跳转页面
+      window.location.href = '/#/login';
+    }
     render(){
         const { menuName, menuType } = this.props;
         return (
@@ -47,7 +62,7 @@ class Header extends React.Component{
                     }
                     <Col span={menuType?18:24}>
                         <span>欢迎，{this.state.userName}</span>
-                        <a href="#">退出</a>
+                        <a href="javascript:void(0)" onClick={this.goLogin}>退出</a>
                     </Col>
                 </Row>
                 {

@@ -1,3 +1,11 @@
+/*
+ * @Author: wangxudong
+ * @Email: wangxudong@foxgoing.com
+ * @Date: 2020-11-10 16:39:30
+ * @LastEditors: wangxudong
+ * @LastEditTime: 2020-11-23 16:17:06
+ * @Description: 
+ */
 import React from 'react';
 import { Select } from 'antd'
 const Option = Select.Option;
@@ -12,11 +20,11 @@ export default {
             onChange:(current)=>{
                 callback(current)
             },
-            current:data.result.page,
-            pageSize:data.result.page_size,
-            total: data.result.total_count,
+            current:data.page,
+            pageSize:data.pageSize,
+            total: data.recordCount,
             showTotal:()=>{
-                return `共${data.result.total_count}条`
+                return `共${data.recordCount}条`
             },
             showQuickJumper:true
         }

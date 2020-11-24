@@ -4,6 +4,8 @@ import axios from '../../axios/index'
 import Footer from '../../components/Footer'
 import Utils from '../../utils/utils'
 import './index.less'
+import { Message } from 'antd'
+
 const FormItem = Form.Item;
 
 export default class Login extends React.Component {
@@ -14,21 +16,48 @@ export default class Login extends React.Component {
     }
 
     loginReq = (params) => {
-        window.location.href = '/#/';
+      let data = new FormData();
+      data.append("username", params.username)
+      data.append("password", params.password)
+
+      axios.ajax({
+        url: '/login',
+        method: 'post',
+        data: data
+      }).then((res) => {
+          if (res.code == 200) {
+            window.localStorage.token = res.token;
+            // 存数据到localStorage
+            window.localStorage.username = res.data.username;
+            window.localStorage.remainDays = res.data.remainDays;
+            window.localStorage.passDays = res.data.passDays;
+              if (res.data.isManager == 1) {
+                // 管理员跳转页面
+                window.location.href = '/#/user';
+              } else {
+                // 普通员工跳转页面
+                window.location.href = '/#/employee';
+              }
+          } else {
+            Message.error(res.msg);
+          }
+      }).catch((res) => {
+        Message.error(res.msg);
+      })
+        // window.location.href = '/#/';
     };
 
     render() {
         return (
             <div className="login-page">
-                <div className="login-header">
+                {/* <div className="login-header">
                     <div className="logo">
                         <img src="/assets/logo-ant.svg" alt="慕课后台管理系统"/>
                         React全家桶+AntD 共享经济热门项目后台管理系统
                     </div>
-                </div>
+                </div> */}
                 <div className="login-content-wrap">
                     <div className="login-content">
-                        <div className="word">共享出行 <br />引领城市新经济</div>
                         <div className="login-box">
                             <div className="error-msg-wrap">
                                 <div
@@ -36,12 +65,12 @@ export default class Login extends React.Component {
                                     {this.state.errorMsg}
                                 </div>
                             </div>
-                            <div className="title">慕课欢迎你</div>
+                            <div className="title">员工年假自助查询</div>
                             <LoginForm ref="login" loginSubmit={this.loginReq}/>
                         </div>
                     </div>
                 </div>
-                <Footer/>
+                {/* <Footer/> */}
             </div>
         )
     }
@@ -87,7 +116,9 @@ class LoginForm extends React.Component {
         const { getFieldDecorator } = this.props.form;
         return (
             <Form className="login-form">
-                <FormItem>
+                <FormItem
+                label="用户名："
+                >
                     {getFieldDecorator('username', {
                         initialValue:'admin',
                         rules: [{validator: this.checkUsername}]
@@ -95,7 +126,9 @@ class LoginForm extends React.Component {
                         <Input placeholder="用户名"/>
                     )}
                 </FormItem>
-                <FormItem>
+                <FormItem
+                label="密码："
+                >
                     {getFieldDecorator('password', {
                         initialValue:'admin',
                         rules: [{validator: this.checkPassword}]

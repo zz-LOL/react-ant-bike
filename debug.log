@@ -1,0 +1,12 @@
+[1113/145030.460:ERROR:crash_report_database_win.cc(498)] failed to stat report
+[1113/145030.461:ERROR:crash_report_database_win.cc(498)] failed to stat report
+[1117/132236.735:ERROR:crash_report_database_win.cc(498)] failed to stat report
+[1117/132236.737:ERROR:crash_report_database_win.cc(498)] failed to stat report
+[1117/132534.536:ERROR:crash_report_database_win.cc(498)] failed to stat report
+[1117/132534.537:ERROR:crash_report_database_win.cc(498)] failed to stat report
+[1117/133534.539:ERROR:crash_report_database_win.cc(498)] failed to stat report
+[1117/133534.540:ERROR:crash_report_database_win.cc(498)] failed to stat report
+[1117/133534.541:ERROR:filesystem_win.cc(116)] GetFileAttributes C:\Users\wangxudong\AppData\Local\Google\Chrome\User Data\Crashpad\reports\2e698299-d9a4-43ce-8ae2-f64148c551a8.dmp: 系统找不到指定的文件。 (0x2)
+[1117/133534.544:ERROR:filesystem_win.cc(116)] GetFileAttributes C:\Users\wangxudong\AppData\Local\Google\Chrome\User Data\Crashpad\reports\99594e08-47de-450e-9f3c-a4f10735cb06.dmp: 系统找不到指定的文件。 (0x2)
+[1117/133534.544:ERROR:directory_reader_win.cc(43)] FindFirstFile: 系统找不到指定的路径。 (0x3)
+[1120/095456.138:ERROR:directory_reader_win.cc(43)] FindFirstFile: 系统找不到指定的路径。 (0x3)

@@ -1,3 +1,11 @@
+/*
+ * @Author: wangxudong
+ * @Email: wangxudong@foxgoing.com
+ * @Date: 2020-11-10 16:39:30
+ * @LastEditors: wangxudong
+ * @LastEditTime: 2020-11-12 13:59:11
+ * @Description: 
+ */
 import React from 'react'
 import { Row,Col } from 'antd';
 import Header from './components/Header'
@@ -6,6 +14,7 @@ import { connect } from 'react-redux'
 import NavLeft from './components/NavLeft'
 import './style/common.less'
 import Home from './pages/home'
+
 class Admin extends React.Component{
 
     render(){
@@ -17,7 +26,7 @@ class Admin extends React.Component{
                 <Col span="20" className="main">
                     <Header/>
                     <Row className="content">
-                        {/* <Home/> */}
+                        {/* {<Home/>} */}
                         {this.props.children}
                     </Row>
                     <Footer/>

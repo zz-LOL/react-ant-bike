@@ -1,3 +1,11 @@
+/*
+ * @Author: wangxudong
+ * @Email: wangxudong@foxgoing.com
+ * @Date: 2020-11-10 16:39:30
+ * @LastEditors: wangxudong
+ * @LastEditTime: 2020-11-24 16:33:22
+ * @Description: 
+ */
 import React from 'react'
 import { HashRouter, Route, Switch, Redirect} from 'react-router-dom'
 import App from './App'
@@ -28,6 +36,8 @@ import Bar from './pages/echarts/bar/index'
 import Pie from './pages/echarts/pie/index'
 import Line from './pages/echarts/line/index'
 import Permission from './pages/permission'
+import Demo from './pages/demo/Life'
+import Employee from './pages/employee'
 
 export default class ERouter extends React.Component{
 
@@ -37,6 +47,7 @@ export default class ERouter extends React.Component{
                 <App>
                     <Switch>
                         <Route path="/login" component={Login}/>
+                        <Route path='/employee' component={Employee} />
                         <Route path="/common" render={() =>
                             <Common>
                                 <Route path="/common/order/detail/:orderId" component={OrderDetail} />
@@ -46,6 +57,9 @@ export default class ERouter extends React.Component{
                         <Route path="/" render={()=>
                             <Admin>
                                 <Switch>
+                                    <Route path='/user' component={User} />
+
+                                    {/* <Route path="/login" component={Login}/>
                                     <Route path='/home' component={Home} />
                                     <Route path="/ui/buttons" component={Buttons} />
                                     <Route path="/ui/modals" component={Modals} />
@@ -63,12 +77,11 @@ export default class ERouter extends React.Component{
                                     <Route path="/city" component={City} />
                                     <Route path="/order" component={Order} />
                                     <Route path='/bikeMap' component={BikeMap} />
-                                    <Route path='/user' component={User} />
                                     <Route path="/charts/bar" component={Bar} />
                                     <Route path="/charts/pie" component={Pie} />
                                     <Route path="/charts/line" component={Line} />
                                     <Route path="/permission" component={Permission} />
-                                    <Redirect to="/home" />
+                                    <Redirect to="/home" /> */}
                                     {/* <Route component={NoMatch} /> */}
                                 </Switch>
                             </Admin>         

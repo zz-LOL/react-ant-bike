@@ -27,7 +27,7 @@ class FilterForm extends React.Component{
                 let placeholder = item.placeholder;
                 let width = item.width;
                 if (item.type == '时间查询'){
-                    const begin_time = <FormItem label="订单时间" key={field}>
+                    const begin_time = <FormItem label="入职时间" key={field}>
                         {
                             getFieldDecorator('begin_time')(
                                 <DatePicker showTime={true} placeholder={placeholder} format="YYYY-MM-DD HH:mm:ss"/>
