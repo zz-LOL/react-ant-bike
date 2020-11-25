@@ -31,6 +31,7 @@ export default class Login extends React.Component {
             window.localStorage.username = res.data.username;
             window.localStorage.remainDays = res.data.remainDays;
             window.localStorage.passDays = res.data.passDays;
+            window.localStorage.isManager = res.data.isManager;
               if (res.data.isManager == 1) {
                 // 管理员跳转页面
                 window.location.href = '/#/user';

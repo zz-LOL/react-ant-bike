@@ -3,7 +3,7 @@
  * @Email: wangxudong@foxgoing.com
  * @Date: 2020-11-10 16:39:30
  * @LastEditors: wangxudong
- * @LastEditTime: 2020-11-24 16:39:20
+ * @LastEditTime: 2020-11-25 14:00:40
  * @Description: 
  */
 import React from 'react'
@@ -62,14 +62,14 @@ class Header extends React.Component{
                     }
                     <Col span={menuType?18:24}>
                         <span>欢迎，{this.state.userName}</span>
-                        <a href="javascript:void(0)" onClick={this.goLogin}>退出</a>
+                        <a onClick={this.goLogin}>退出</a>
                     </Col>
                 </Row>
                 {
                     menuType?'':
                         <Row className="breadcrumb">
                             <Col span="4" className="breadcrumb-title">
-                                {menuName || '首页'}
+                                {menuName || '年假管理'}
                             </Col>
                             <Col span="20" className="weather">
                                 <span className="date">{this.state.sysTime}</span>

@@ -1,3 +1,11 @@
+/*
+ * @Author: wangxudong
+ * @Email: wangxudong@foxgoing.com
+ * @Date: 2020-11-10 16:39:30
+ * @LastEditors: wangxudong
+ * @LastEditTime: 2020-11-25 13:57:30
+ * @Description: 
+ */
 import React from 'react'
 import { Menu, Icon } from 'antd';
 import { NavLink } from 'react-router-dom'
@@ -59,7 +67,7 @@ class NavLeft extends React.Component {
                 <NavLink to="/home" onClick={this.homeHandleClick}>
                     <div className="logo">
                         <img src="/assets/logo-ant.svg" alt=""/>
-                        <h1>Imooc MS</h1>
+                        <h1>员工管理系统</h1>
                     </div>
                 </NavLink>
                 <Menu

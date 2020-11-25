@@ -1,6 +1,6 @@
 const menuList = [
     {
-        title: '首页',
+        title: '年假管理',
         key: '/user'
     },
     /* {

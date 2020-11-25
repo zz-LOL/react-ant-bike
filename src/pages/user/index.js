@@ -22,7 +22,7 @@ export default class User extends React.Component{
       PageIndex:1,
       pageSize: 10,
       userName: '',
-      phone: null
+      phone: ''
     }
 
     formList = [
@@ -74,6 +74,10 @@ export default class User extends React.Component{
     }
 
     componentDidMount(){
+      if (localStorage.getItem('isManager') != 1) {
+        Message.error('此账号没有管理员权限！');
+        window.location.href = '/#/login';
+      }
         this.requestList();
     }
 
@@ -133,6 +137,8 @@ export default class User extends React.Component{
                           })
 
                           this.requestList();
+                      } else {
+                        Message.error(res.msg);
                       }
                   })
               }
@@ -142,38 +148,55 @@ export default class User extends React.Component{
 
     handleSubmit = ()=>{
         let type = this.state.type;
+        if (type == 'detail') {
+          this.setState({
+            isVisible:false
+          })
+
+          return false
+        }
+
         let data = this.userForm.props.form.getFieldsValue();
+        if (data.passDate) {
+          let passDateStr = Moment(data.passDate).format('YYYY-MM-DD')
+          data.passDate = passDateStr
+        }
         let dateString = Moment(data.regTime).format('YYYY-MM-DD')
         data.regTime = dateString
-        axios.ajax({
-            url:type == 'create'?'/sysUser/add':'/sysUser/update',
-            method: 'post',
-            transformRequest: [function (data) {
-              // 对 data 进行任意转换处理
-              return Qs.stringify(data)
-            }],
-            data:{
-                ...data
-            }
-        }).then((res)=>{
-            if(res.code == 200){
-                this.setState({
-                    isVisible:false
-                })
-                if (type == 'create') {
-                  Message.success("创建员工成功！");
-                } else {
-                  Message.success("编辑员工成功！");
-                }
-                this.requestList();
-            } else {
-              if (type == 'create') {
-                Message.error("创建员工失败！");
-              } else {
-                Message.error("编辑员工失败！");
+        data.id = this.state.userInfo.id
+        this.userForm.props.form.validateFieldsAndScroll((err, values) => {
+          if (!err) {
+            axios.ajax({
+              url:type == 'create'?'/sysUser/add':'/sysUser/update',
+              method: 'post',
+              transformRequest: [function (data) {
+                // 对 data 进行任意转换处理
+                return Qs.stringify(data)
+              }],
+              data:{
+                  ...data
               }
-            }
-        })
+            }).then((res)=>{
+                if(res.code == 200){
+                    this.setState({
+                        isVisible:false
+                    })
+                    if (type == 'create') {
+                      Message.success("创建员工成功！");
+                    } else {
+                      Message.success("编辑员工成功！");
+                    }
+                    this.requestList();
+                } else {
+                  if (type == 'create') {
+                    Message.error("创建员工失败！");
+                  } else {
+                    Message.error("编辑员工失败！");
+                  }
+                }
+            })
+          }
+        });
     }
 
     // 修改密码
@@ -332,7 +355,12 @@ class UserForm extends React.Component{
                     {
                         userInfo && type=='detail'?userInfo.userName:
                         getFieldDecorator('userName',{
-                            initialValue:userInfo.userName
+                            initialValue:userInfo.userName,
+                            rules:[
+                              {
+                                  required:true,
+                                  message:'姓名不能为空'
+                              },]
                         })(
                             <Input type="text" placeholder="请输入姓名" disabled={type=='edit'} />
                         )
@@ -342,7 +370,12 @@ class UserForm extends React.Component{
                     {
                         userInfo && type=='detail'?userInfo.phone:
                         getFieldDecorator('phone',{
-                            initialValue:userInfo.phone
+                            initialValue:userInfo.phone,
+                            rules:[
+                              {
+                                  required:true,
+                                  message:'手机号不能为空'
+                              },]
                         })(
                           <Input type="text" placeholder="请输入手机号" disabled={type=='edit'} />
                     )}
@@ -351,7 +384,12 @@ class UserForm extends React.Component{
                     {
                         userInfo && type=='detail'?userInfo.regTime:
                         getFieldDecorator('regTime',{
-                            initialValue: type=='create' ? '' : Moment(userInfo.regTime, dateFormat)
+                            initialValue: type=='create' ? null : Moment(userInfo.regTime, dateFormat),
+                            rules:[
+                              {
+                                  required:true,
+                                  message:'入职时间不能为空'
+                              },]
                         })(
                           <DatePicker locale={locale} format={dateFormat} disabled={type=='edit'} />
                     )}
@@ -382,15 +420,17 @@ class UserForm extends React.Component{
                     {
                         userInfo && type=='detail'?userInfo.passDate:
                         getFieldDecorator('passDate',{
-                            initialValue: type=='create' ? '' : Moment(userInfo.passDate, dateFormat)
+                            initialValue: type=='create' ? null : Moment(userInfo.passDate, dateFormat)
                         })(
                           <DatePicker locale={locale} format={dateFormat} />
                     )}
                 </FormItem>
-                <Row>
-                  <Col span={5}></Col>
-                  <Button onClick={(e) => {this.props.showPwd(e)}}>修改密码</Button>
-                </Row>
+                { type =='edit' &&
+                  <Row>
+                    <Col span={5}></Col>
+                    <Button onClick={(e) => {this.props.showPwd(e)}}>修改密码</Button>
+                  </Row>
+                }
                 </div>
                 }
                 
