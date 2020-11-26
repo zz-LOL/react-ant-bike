@@ -17,7 +17,7 @@ export default class Login extends React.Component {
 
     loginReq = (params) => {
       let data = new FormData();
-      data.append("username", params.username)
+      data.append("username", params.userName)
       data.append("password", params.password)
 
       axios.ajax({
@@ -28,7 +28,7 @@ export default class Login extends React.Component {
           if (res.code == 200) {
             window.localStorage.token = res.token;
             // 存数据到localStorage
-            window.localStorage.username = res.data.username;
+            window.localStorage.userName = res.data.userName;
             window.localStorage.remainDays = res.data.remainDays;
             window.localStorage.passDays = res.data.passDays;
             window.localStorage.isManager = res.data.isManager;
@@ -87,14 +87,14 @@ class LoginForm extends React.Component {
             if (!err) {
                 var formValue = _this.props.form.getFieldsValue();
                 _this.props.loginSubmit({
-                    username: formValue.username,
+                    userName: formValue.userName,
                     password: formValue.password
                 });
             }
         });
     };
 
-    checkUsername = (rule, value, callback) => {
+    checkuserName = (rule, value, callback) => {
         var reg = /^\w+$/;
         if (!value) {
             callback('请输入用户名!');
@@ -120,9 +120,9 @@ class LoginForm extends React.Component {
                 <FormItem
                 label="用户名："
                 >
-                    {getFieldDecorator('username', {
+                    {getFieldDecorator('userName', {
                         initialValue:'admin',
-                        rules: [{validator: this.checkUsername}]
+                        rules: [{validator: this.checkuserName}]
                     })(
                         <Input placeholder="用户名"/>
                     )}

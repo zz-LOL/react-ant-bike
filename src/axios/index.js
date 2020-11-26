@@ -3,7 +3,7 @@
  * @Email: wangxudong@foxgoing.com
  * @Date: 2020-11-10 16:39:30
  * @LastEditors: wangxudong
- * @LastEditTime: 2020-11-25 15:08:59
+ * @LastEditTime: 2020-11-26 11:08:20
  * @Description: 
  */
 import JsonP from 'jsonp'
@@ -15,7 +15,7 @@ export default class Axios {
             JsonP(options.url, {
                 param: 'callback'
             }, function (err, response) {
-                if (response.status == 'success') {
+                if (response.code == 200) {
                     resolve(response);
                 } else {
                     reject(response.messsage);
@@ -31,7 +31,7 @@ export default class Axios {
             loading.style.display = 'block';
         }
         // let baseApi = 'http://192.168.71.74:8080';
-        let baseApi = 'http://10.0.1.191:9999';
+        let baseApi = 'http://39.106.209.171:9999';
         var token = localStorage.getItem('token')
         if (token) {
           axios.defaults.headers.common['token'] = token;

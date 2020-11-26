@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Button, Table, Form, Input, Checkbox,Select,Radio, Icon, Message, Modal, DatePicker, Row, Col } from 'antd'
+import { Card, Button, Table, Form, Input, Checkbox,Select,Radio, Icon, Message, Modal, DatePicker, Row, Col, InputNumber } from 'antd'
 import axios from '../../axios/index'
 import Utils from '../../utils/utils'
 import ETable from '../../components/ETable/index'
@@ -157,13 +157,16 @@ export default class User extends React.Component{
         }
 
         let data = this.userForm.props.form.getFieldsValue();
-        if (data.passDate) {
-          let passDateStr = Moment(data.passDate).format('YYYY-MM-DD')
-          data.passDate = passDateStr
-        }
         let dateString = Moment(data.regTime).format('YYYY-MM-DD')
         data.regTime = dateString
-        data.id = this.state.userInfo.id
+        if (type != 'create') {
+          if (data.passDate) {
+            let passDateStr = Moment(data.passDate).format('YYYY-MM-DD')
+            data.passDate = passDateStr
+          }
+          data.id = this.state.userInfo.id
+        }
+        
         this.userForm.props.form.validateFieldsAndScroll((err, values) => {
           if (!err) {
             axios.ajax({
@@ -349,6 +352,12 @@ class UserForm extends React.Component{
         const type = this.props.type;
         const dateFormat = 'YYYY-MM-DD';
 
+        let disabledDate = (current) => {
+          // Can not select days before today and today
+          // return current && current < Moment().endOf('day'); // 当天之前的不可选，包括当天
+          return current > Moment().subtract(0, 'day') // 当天之前的不可选，不包括当天
+          }
+
         return (
             <Form layout="horizontal">
                 <FormItem label="姓名" {...formItemLayout}>
@@ -375,7 +384,11 @@ class UserForm extends React.Component{
                               {
                                   required:true,
                                   message:'手机号不能为空'
-                              },]
+                              },
+                              {
+                                pattern: /^1[3|4|5|7|8][0-9]\d{8}$/, message: '请输入正确的手机号'
+                              }
+                            ]
                         })(
                           <Input type="text" placeholder="请输入手机号" disabled={type=='edit'} />
                     )}
@@ -391,7 +404,7 @@ class UserForm extends React.Component{
                                   message:'入职时间不能为空'
                               },]
                         })(
-                          <DatePicker locale={locale} format={dateFormat} disabled={type=='edit'} />
+                          <DatePicker locale={locale} format={dateFormat} disabledDate={disabledDate} disabled={type=='edit'} />
                     )}
                 </FormItem>
                 { type!='create' &&
@@ -402,7 +415,7 @@ class UserForm extends React.Component{
                         getFieldDecorator('passDays',{
                             initialValue:userInfo.passDays
                         })(
-                            <Input type="text" placeholder="请输入" />
+                            <InputNumber min={0} placeholder="请输入" />
                         )
                     }
                   </FormItem>
@@ -412,7 +425,7 @@ class UserForm extends React.Component{
                         getFieldDecorator('baseDays',{
                             initialValue:userInfo.baseDays
                         })(
-                            <Input type="text" placeholder="请输入" />
+                            <InputNumber min={0} placeholder="请输入" />
                         )
                     }
                   </FormItem>

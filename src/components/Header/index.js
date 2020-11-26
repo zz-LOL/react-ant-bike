@@ -3,7 +3,7 @@
  * @Email: wangxudong@foxgoing.com
  * @Date: 2020-11-10 16:39:30
  * @LastEditors: wangxudong
- * @LastEditTime: 2020-11-25 14:00:40
+ * @LastEditTime: 2020-11-26 14:26:53
  * @Description: 
  */
 import React from 'react'
@@ -16,7 +16,7 @@ class Header extends React.Component{
     state={}
     componentWillMount(){
         this.setState({
-            userName: window.localStorage.username
+            userName: window.localStorage.userName
         })
         setInterval(()=>{
             let sysTime = Util.formateDate(new Date().getTime());
@@ -25,6 +25,9 @@ class Header extends React.Component{
             })
         },1000)
         this.getWeatherAPIData();
+        if (localStorage.getItem('isManager') != 1) {
+          window.location.href = '/#/login';
+        }
     }
 
     getWeatherAPIData(){

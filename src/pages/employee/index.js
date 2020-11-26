@@ -3,7 +3,7 @@
  * @Email: wangxudong@foxgoing.com
  * @Date: 2020-11-13 15:03:20
  * @LastEditors: wangxudong
- * @LastEditTime: 2020-11-23 16:02:35
+ * @LastEditTime: 2020-11-26 14:29:24
  * @Description: 员工查询页面
  */
 
@@ -18,7 +18,7 @@ const FormItem = Form.Item;
 export default class Employee extends React.Component{
 
     state = {
-      username: null,
+      userName: null,
       remainDays: null,
       passDays: null,
       pasVisible: false,
@@ -42,7 +42,7 @@ export default class Employee extends React.Component{
       // 组件渲染结束
       console.log('componentDidMount')
       this.setState({
-        username: localStorage.getItem('username'),
+        userName: localStorage.getItem('userName'),
         remainDays: localStorage.getItem('remainDays'),
         passDays: localStorage.getItem('passDays')
     })
@@ -123,7 +123,7 @@ export default class Employee extends React.Component{
           if (!err) {
               var formValue = _this.props.form.getFieldsValue();
               _this.props.loginSubmit({
-                  username: formValue.username,
+                  userName: formValue.userName,
                   password: formValue.password
               });
           }
@@ -139,7 +139,7 @@ export default class Employee extends React.Component{
             
             <h1>员工年假自助查询</h1>
             <div className="fenge"></div>
-            <div className="showDetail">姓名： {this.state.username}</div>
+            <div className="showDetail">姓名： {this.state.userName}</div>
             <div className="showDetail">本年度剩余年假： {this.state.remainDays}</div>
             <div className="showDetail">本年度已用年假： {this.state.passDays}</div>
 
@@ -177,7 +177,7 @@ class PasForm extends React.Component {
       });
   };
 
-  checkUsername = (rule, value, callback) => {
+  checkuserName = (rule, value, callback) => {
     if (!value) {
         callback('请输入现用密码!');
     } else {
@@ -214,7 +214,7 @@ class PasForm extends React.Component {
               label="现用密码："
               >
                   {getFieldDecorator('nowPassword', {
-                      rules: [{validator: this.checkUsername}]
+                      rules: [{validator: this.checkuserName}]
                   })(
                       <Input type="password" placeholder="请输入现用密码"/>
                   )}
