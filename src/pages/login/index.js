@@ -32,9 +32,11 @@ export default class Login extends React.Component {
             window.localStorage.remainDays = res.data.remainDays;
             window.localStorage.passDays = res.data.passDays;
             window.localStorage.isManager = res.data.isManager;
+            window.localStorage.userInfoId = res.data.id;
+
               if (res.data.isManager == 1) {
                 // 管理员跳转页面
-                window.location.href = '/#/user';
+                window.location.href = '/#/sys/user';
               } else {
                 // 普通员工跳转页面
                 window.location.href = '/#/employee';
@@ -60,18 +62,16 @@ export default class Login extends React.Component {
                 <div className="login-content-wrap">
                     <div className="login-content">
                         <div className="login-box">
-                            <div className="error-msg-wrap">
-                                <div
-                                    className={this.state.errorMsg?"show":""}>
-                                    {this.state.errorMsg}
-                                </div>
-                            </div>
-                            <div className="title">员工年假自助查询</div>
-                            <LoginForm ref="login" loginSubmit={this.loginReq}/>
+                          <div className="winlogo"></div>
+                          <div className="title">员工年假自助查询</div>
+                          <LoginForm ref="login" loginSubmit={this.loginReq}/>
                         </div>
                     </div>
                 </div>
                 {/* <Footer/> */}
+                <div className="copyrightRe">
+                  <div className="copyright">Copyright © 2020-2040 Someone. All rights reserved.</div>
+                </div>
             </div>
         )
     }
@@ -95,11 +95,8 @@ class LoginForm extends React.Component {
     };
 
     checkuserName = (rule, value, callback) => {
-        var reg = /^\w+$/;
         if (!value) {
             callback('请输入用户名!');
-        } else if (!reg.test(value)) {
-            callback('用户名只允许输入英文字母');
         } else {
             callback();
         }
@@ -121,7 +118,7 @@ class LoginForm extends React.Component {
                 label="用户名："
                 >
                     {getFieldDecorator('userName', {
-                        initialValue:'admin',
+                        initialValue:'',
                         rules: [{validator: this.checkuserName}]
                     })(
                         <Input placeholder="用户名"/>
@@ -131,7 +128,7 @@ class LoginForm extends React.Component {
                 label="密码："
                 >
                     {getFieldDecorator('password', {
-                        initialValue:'admin',
+                        initialValue:'',
                         rules: [{validator: this.checkPassword}]
                     })(
                         <Input type="password" placeholder="密码" wrappedcomponentref={(inst) => this.pwd = inst } />

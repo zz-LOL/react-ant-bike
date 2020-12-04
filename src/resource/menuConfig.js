@@ -93,7 +93,7 @@ const menuList = [
     },
     {
         title:'员工管理',
-        key:'/user'
+        key:'/sys/user'
     },
     {
         title:'车辆地图',

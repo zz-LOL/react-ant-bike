@@ -3,7 +3,7 @@
  * @Email: wangxudong@foxgoing.com
  * @Date: 2020-11-10 16:39:30
  * @LastEditors: wangxudong
- * @LastEditTime: 2020-11-26 15:12:29
+ * @LastEditTime: 2020-12-02 15:55:38
  * @Description: 
  */
 import React from 'react'
@@ -46,6 +46,7 @@ export default class ERouter extends React.Component{
             <HashRouter>
                 <App>
                     <Switch>
+                      <Route exact path="/" component={Login}/>
                         <Route path="/login" component={Login}/>
                         <Route path='/employee' component={Employee} />
                         <Route path="/common" render={() =>
@@ -54,10 +55,10 @@ export default class ERouter extends React.Component{
                             </Common>
                         }
                         />
-                        <Route path="/" render={()=>
+                        <Route path="/sys" render={()=>
                             <Admin>
                                 <Switch>
-                                    <Route path='/user' component={User} />
+                                    <Route path='/sys/user' component={User} />
 
                                     {/* <Route path="/login" component={Login}/>
                                     <Route path='/home' component={Home} />

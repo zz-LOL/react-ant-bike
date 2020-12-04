@@ -4,11 +4,15 @@
 
 .fenge{
   width: 100%;
-  height: 50px;
+  height: 100px;
 }
 
 .showDetail{
+  width: 150px;
+  margin: 0 auto;
   margin-bottom: 10px;
+  color: #6C717B;
+  font-size: 15px;
 }
 
 .exitButton{
@@ -23,12 +27,68 @@
 }
 
 .contentTitle{
+  position: absolute;
+  right: 50px;
+  bottom: 50px;
   width: 100%;
   display: block;
   overflow: hidden;
   margin-bottom: 40px;
+  z-index: 100;
 }
 
 .floatRight{
   float: right;
+}
+
+.cover-img{
+  background: url("/assets/b1.jpg");
+  height: 190px;
+  background-size: cover;
+  background-position: 10% 20%;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  position: relative;
+}
+
+.todoList{
+  width: 100%;
+  height: 100%;
+}
+
+.content{
+  padding: 0;
+}
+
+.cover-img h3 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Nunito', sans-serif;
+  text-transform: uppercase;
+  font-size: 2.8rem;
+  z-index: 10;
+  font-weight: 700;
+  color: #fff;
+}
+
+@media screen and (min-width: 800px){
+  .cover-img{
+    height: 300px;
+  }
+  .winlogoemplyee{
+    height: 60px !important;
+    width: 400px !important;
+  }
+}
+.winlogoemplyee{
+  top:0.5rem;
+  left:0.5rem;
+  position: absolute;
+  height: 1.8rem;
+  width: 12rem;
+  z-index: 1000;
+  background:url("/assets/companyName.png");
+  background-size: 100% 100%;
 }

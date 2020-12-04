@@ -1,7 +1,7 @@
 const menuList = [
     {
         title: '年假管理',
-        key: '/user'
+        key: '/sys/user'
     },
     /* {
         title: 'UI',

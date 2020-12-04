@@ -3,7 +3,7 @@
  * @Email: wangxudong@foxgoing.com
  * @Date: 2020-11-10 16:39:30
  * @LastEditors: wangxudong
- * @LastEditTime: 2020-11-25 13:57:30
+ * @LastEditTime: 2020-12-02 17:35:32
  * @Description: 
  */
 import React from 'react'
@@ -64,9 +64,9 @@ class NavLeft extends React.Component {
     render() {
         return (
             <div>
-                <NavLink to="/home" onClick={this.homeHandleClick}>
+                <NavLink to="/sys/user">
                     <div className="logo">
-                        <img src="/assets/logo-ant.svg" alt=""/>
+                        <img src="/assets/logo.png" alt=""/>
                         <h1>员工管理系统</h1>
                     </div>
                 </NavLink>

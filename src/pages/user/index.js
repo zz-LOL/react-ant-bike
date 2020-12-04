@@ -7,6 +7,7 @@ import BaseForm from '../../components/BaseForm'
 import Qs from 'qs';
 import 'moment/locale/zh-cn';
 import Moment from 'moment'
+import './index.less'
 import locale from 'antd/lib/date-picker/locale/zh_CN';
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -15,11 +16,12 @@ export default class User extends React.Component{
 
     state = {
         list:[],
-        pwdInfo: ''
+        pwdInfo: '',
+        userInfo: ''
     }
 
     params = {
-      PageIndex:1,
+      pageIndex:1,
       pageSize: 10,
       userName: '',
       phone: ''
@@ -53,7 +55,7 @@ export default class User extends React.Component{
               return Qs.stringify(data)
             }],
             data: {
-                PageIndex: this.params.PageIndex,
+                pageIndex: this.params.pageIndex,
                 pageSize: this.params.pageSize,
                 userName: this.params.userName,
                 phone: this.params.phone
@@ -61,12 +63,14 @@ export default class User extends React.Component{
         }).then((res)=>{
             let _this = this;
             this.setState({
+                selectedRowKeys: [],
+                selectedItem: null,
                 list:res.records.map((item,index)=>{
                     item.key=index
                     return item;
                 }),
                 pagination:Utils.pagination(res,(current)=>{
-                    _this.params.PageIndex = current.page;
+                    _this.params.pageIndex = current;
                     _this.requestList();
                 })
             })
@@ -147,6 +151,7 @@ export default class User extends React.Component{
     }
 
     handleSubmit = ()=>{
+        let that = this
         let type = this.state.type;
         if (type == 'detail') {
           this.setState({
@@ -181,9 +186,12 @@ export default class User extends React.Component{
               }
             }).then((res)=>{
                 if(res.code == 200){
-                    this.setState({
-                        isVisible:false
-                    })
+                  this.setState({
+                      isVisible:false,
+                      userInfo:''
+                  })
+                  // 清空表单数据
+                  this.userForm.props.form.resetFields();
                     if (type == 'create') {
                       Message.success("创建员工成功！");
                     } else {
@@ -252,9 +260,6 @@ export default class User extends React.Component{
 
     render(){
         const columns = [{
-            title: 'id',
-            dataIndex: 'id'
-          }, {
             title: '姓名',
             dataIndex: 'userName'
           }, {
@@ -304,6 +309,7 @@ export default class User extends React.Component{
                     width={800}
                     cancelText="取消"
                     okText="确认"
+                    bodyStyle={{height: '450px', overflowY: 'auto'}}
                     onCancel={()=>{
                         this.userForm.props.form.resetFields();
                         this.setState({
@@ -351,6 +357,20 @@ class UserForm extends React.Component{
         const userInfo = this.props.userInfo || {};
         const type = this.props.type;
         const dateFormat = 'YYYY-MM-DD';
+        const logColumns = [{
+            title: '操作人',
+            dataIndex: 'phone'
+          }, {
+            title: '操作时间',
+            dataIndex: 'createTime'
+          }, {
+            title: '操作地址',
+            dataIndex: 'ip'
+          }, {
+            title: '操作日志',
+            dataIndex: 'log'
+          }
+        ];
 
         let disabledDate = (current) => {
           // Can not select days before today and today
@@ -409,11 +429,11 @@ class UserForm extends React.Component{
                 </FormItem>
                 { type!='create' &&
                   <div>
-                    <FormItem label="已使用年假" {...formItemLayout}>
+                    <FormItem label={type=='edit' ? '本次休假天数' : '已使用年假'} {...formItemLayout}>
                     {
                         userInfo && type=='detail'?userInfo.passDays:
                         getFieldDecorator('passDays',{
-                            initialValue:userInfo.passDays
+                            initialValue: 0
                         })(
                             <InputNumber min={0} placeholder="请输入" />
                         )
@@ -444,6 +464,17 @@ class UserForm extends React.Component{
                     <Button onClick={(e) => {this.props.showPwd(e)}}>修改密码</Button>
                   </Row>
                 }
+
+                  <div className="content-title">操作记录:</div>
+
+                  <div className="content-wrap">
+                    <ETable
+                        columns={logColumns}
+                        updateSelectedItem={Utils.updateSelectedItem.bind(this)}
+                        dataSource={userInfo.logs}
+                        rowSelection={false}
+                    />
+                  </div>
                 </div>
                 }
                 

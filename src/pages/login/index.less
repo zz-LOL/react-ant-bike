@@ -1,5 +1,8 @@
 @import '../../style/default.less';
 .login-page{
+    height: calc(100vh);
+    background:url("/assets/b1.jpg") no-repeat center;
+    background-size: cover;
     .footer{
         //padding-top:40px;
         position:fixed;
@@ -43,16 +46,25 @@
         margin-right: 15px;
     }
 }
+.login-content-wrap .ant-form-item-label > label{
+  color: #fff;
+}
 .login-content-wrap{
     min-height:550px;
     //height:calc(~'100vh - 100px');
     height:calc(~'100vh');
-    // background:url(https://media.xiaohuali.com/ebike-fc/login/banner.jpg) no-repeat center;
     background-size:cover;
+    background: url(/assets/dott.png)repeat 0px 0px;
+    background-size: 2px;
+    -webkit-background-size: 2px;
+    -moz-background-size: 2px;
+    -o-background-size: 2px;
+    -ms-background-size: 2px;
+    padding: 1em 0 6em;
 }
 .login-content{
     position:relative;
-    top:50%;
+    top:46%;
     display:flex;
     max-width:460px;
     margin:0 auto;
@@ -72,16 +84,13 @@
 .login-box{
     position:relative;
     flex:4;
-    height:400px;
+    height:500px;
     padding:40px 30px 0 30px;
-    background:#fff;
-    overflow:hidden;
     .title{
         line-height:1;
         margin-bottom:50px;
-        font-size:32px;
-        color:@colorC;
-        font-weight:bold;
+        font-size:22px;
+        color: #fff;
         text-align:center;
     }
     .error-msg-wrap{
@@ -109,7 +118,7 @@
         }
     }
 }
-@media screen and (max-width: 1200px){
+@media screen and (min-width: 800px){
     .login-header{
         padding-left:30px;
         padding-right:30px;
@@ -119,4 +128,30 @@
             font-size:48px;
         }
     }
+    .winlogo{
+      height: 4rem !important;
+    }
+}
+
+.login-page .login-form-button{
+  background-color: #f54950;
+  border-color: #f54950;
+}
+
+.winlogo{
+  width: 120%;
+  margin-left: -10%;
+  height: 3rem;
+  background:url("/assets/companyName.png");
+  background-size: 100% 100%;
+  margin-bottom: 20px;
+}
+
+.copyright{
+  position: fixed;
+  left: 50%;
+  width: 350px;
+  transform: translateX(-50%);
+  bottom: 10px;
+  color: #fff;
 }

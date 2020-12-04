@@ -3,7 +3,7 @@
  * @Email: wangxudong@foxgoing.com
  * @Date: 2020-11-13 15:03:20
  * @LastEditors: wangxudong
- * @LastEditTime: 2020-11-26 14:29:24
+ * @LastEditTime: 2020-12-02 17:40:37
  * @Description: 员工查询页面
  */
 
@@ -132,17 +132,20 @@ export default class Employee extends React.Component{
 
     render(){
         return <div className="content">
+          <div className="winlogoemplyee"></div>
           <div className="contentTitle">
             <Button onClick={this.exit} className="exitButton">安全退出</Button>
             <Button onClick={this.modifyPas} className="modifyPas">修改密码</Button>
           </div>
-            
-            <h1>员工年假自助查询</h1>
+          <div className="todoList">
+          <div className="cover-img">
+            <h3>annual leave</h3>
+          </div>
             <div className="fenge"></div>
             <div className="showDetail">姓名： {this.state.userName}</div>
             <div className="showDetail">本年度剩余年假： {this.state.remainDays}</div>
             <div className="showDetail">本年度已用年假： {this.state.passDays}</div>
-
+          </div>
             <Modal
               title="修改密码"
               visible={this.state.pasVisible}

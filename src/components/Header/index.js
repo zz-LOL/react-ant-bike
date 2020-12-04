@@ -3,15 +3,16 @@
  * @Email: wangxudong@foxgoing.com
  * @Date: 2020-11-10 16:39:30
  * @LastEditors: wangxudong
- * @LastEditTime: 2020-11-26 14:26:53
+ * @LastEditTime: 2020-12-03 14:01:45
  * @Description: 
  */
 import React from 'react'
-import { Row,Col } from "antd"
+import { Row,Col, Modal, Form, Message, Input  } from "antd"
 import './index.less'
 import Util from '../../utils/utils'
 import axios from '../../axios'
 import { connect } from 'react-redux'
+const FormItem = Form.Item;
 class Header extends React.Component{
     state={}
     componentWillMount(){
@@ -51,6 +52,43 @@ class Header extends React.Component{
       // 普通员工跳转页面
       window.location.href = '/#/login';
     }
+    changePaws = (e) => {
+      this.setState({
+        isPwdVisible: true
+      })
+    }
+
+    changePwdValue = (e) => {
+      this.setState({
+        pwdInfo : e.target.value
+      })
+    }
+
+    // 修改密码
+    handlePwdSubmit = () => {
+      let data = new FormData();
+      data.append("npwd", this.state.pwdInfo)
+      data.append("uid", window.localStorage.userInfoId)
+      if (this.state.pwdInfo) {
+        axios.ajax({
+          url:'sysUser/repass_admin',
+          method: 'post',
+          data: data
+        }).then((res)=>{
+            if(res.code == 200){
+                this.setState({
+                  isPwdVisible:false
+                })
+                Message.success("修改密码成功！");
+            } else {
+              Message.error("修改密码失败！");
+            }
+        })
+      } else {
+        Message.error("修改新密码不能为空！");
+      }
+    }
+
     render(){
         const { menuName, menuType } = this.props;
         return (
@@ -65,7 +103,8 @@ class Header extends React.Component{
                     }
                     <Col span={menuType?18:24}>
                         <span>欢迎，{this.state.userName}</span>
-                        <a onClick={this.goLogin}>退出</a>
+                        <a onClick={this.changePaws}>修改密码</a>
+                        <a className="dangerColor" onClick={this.goLogin}>退出</a>
                     </Col>
                 </Row>
                 {
@@ -85,6 +124,25 @@ class Header extends React.Component{
                             </Col>
                         </Row>
                 }
+
+                  <Modal
+                    title="修改密码"
+                    visible={this.state.isPwdVisible}
+                    onOk={this.handlePwdSubmit}
+                    width={800}
+                    cancelText="取消"
+                    okText="确认"
+                    onCancel={()=>{
+                        this.setState({
+                          isPwdVisible:false,
+                          pwdInfo:''
+                        })
+                    }}
+                  >
+                    <FormItem label="修改密码" labelCol={{ span: 5 }} wrapperCol={{ span: 16 }}>
+                      <Input type="text" placeholder="请输入新密码" onChange={(e) => {this.changePwdValue(e)}} />
+                    </FormItem>
+                </Modal>
             </div>
         );
     }
